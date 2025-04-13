@@ -1,0 +1,7 @@
+[package]
+name = "graph_play"
+version = "0.1.0"
+edition = "2024"
+
+[dependencies]
+uuid = { version = "1.16.0", features = ["js", "v4"] }
