@@ -3,7 +3,16 @@ use super::super::node::Node;
 use std::{collections::HashSet, rc::Rc};
 
 #[derive(Debug, Default)]
-pub struct AdjacencyMatrix(HashSet<Rc<Node>>, Vec<Vec<u64>>);
+pub struct AdjacencyMatrix(HashSet<Rc<Node>>, ndarray::Array2<u64>);
+
+impl AdjacencyMatrix {
+    pub fn new(nodes: HashSet<Rc<Node>>, matrix: ndarray::Array2<u64>) -> Self {
+        AdjacencyMatrix(nodes, matrix)
+    }
+    pub fn get_matrix(&self) -> &ndarray::Array2<u64> {
+        &self.1
+    }
+}
 
 impl Graph for AdjacencyMatrix {
     fn add_node(&mut self, node: Rc<Node>) {
