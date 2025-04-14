@@ -1,14 +1,17 @@
-use std::{hash::Hash, rc::Rc};
+use std::{
+    hash::{Hash, Hasher},
+    rc::Rc,
+};
 
 use super::node::Node;
 
-#[derive(PartialEq, Hash, Eq, Debug)]
+#[derive(PartialEq, Hash, Eq, Debug, Clone)]
 pub enum EdgeType {
     Undirected,
     Directed,
 }
 
-#[derive(Debug)]
+#[derive(Debug, Clone)]
 pub struct Edge {
     start_node: Rc<Node>,
     end_node: Rc<Node>,
@@ -45,17 +48,27 @@ impl Edge {
 }
 impl PartialEq for Edge {
     fn eq(&self, other: &Self) -> bool {
-        (self.start_node == other.start_node && self.end_node == other.end_node)
-            || (self.start_node == other.end_node && self.end_node == other.start_node)
+        ((self.start_node == other.start_node && self.end_node == other.end_node)
+            || (self.start_node == other.end_node && self.end_node == other.start_node))
+            && self.weight == other.weight
+            && self.edge_type == other.edge_type
     }
 }
 
 impl Eq for Edge {}
 
 impl Hash for Edge {
-    fn hash<H: std::hash::Hasher>(&self, state: &mut H) {
-        self.start_node.hash(state);
-        self.end_node.hash(state);
+    fn hash<H: Hasher>(&self, state: &mut H) {
+        // Hash the fields in a consistent order
+        let (start, end) = if self.start_node < self.end_node {
+            (&self.start_node, &self.end_node)
+        } else {
+            (&self.end_node, &self.start_node)
+        };
+        start.hash(state);
+        end.hash(state);
+        self.weight.hash(state);
+        self.edge_type.hash(state);
     }
 }
 
@@ -84,7 +97,27 @@ mod tests {
 
         let edge3 = Edge::new(node1.clone(), node2.clone(), None, Some(EdgeType::Directed));
         assert_ne!(edge1, edge3);
+
         let edge4 = Edge::new(node2.clone(), node1.clone(), None, None);
-        assert_ne!(edge1, edge4);
+        assert_eq!(edge1, edge4);
+
+        let edge5 = Edge::new(node2.clone(), node1.clone(), None, Some(EdgeType::Directed));
+        assert_ne!(edge1, edge5);
+    }
+    #[test]
+    fn test_edge_hashset() {
+        let node1 = Rc::new(Node::new());
+        let node2 = Rc::new(Node::new());
+        let edge1 = Edge::new(node1.clone(), node2.clone(), None, None);
+        let edge2 = Edge::new(node1.clone(), node2.clone(), None, None);
+        let edge3 = Edge::new(node2.clone(), node1.clone(), None, None);
+
+        let mut hashset = std::collections::HashSet::new();
+        hashset.insert(edge1);
+        hashset.insert(edge2);
+        assert_eq!(hashset.len(), 1);
+
+        hashset.insert(edge3);
+        assert_eq!(hashset.len(), 1);
     }
 }

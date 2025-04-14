@@ -11,9 +11,9 @@ use super::{
 
 pub trait Graph {
     fn add_node(&mut self, node: Rc<Node>);
-    fn add_nodes(&mut self, nodes: Vec<Rc<Node>>);
+    fn add_nodes(&mut self, nodes: HashSet<Rc<Node>>);
     fn add_edge(&mut self, edge: Edge);
-    fn add_edges(&mut self, edges: Vec<Edge>);
+    fn add_edges(&mut self, edges: HashSet<Edge>);
     fn to_adjacency_matrix(&self) -> AdjacencyMatrix;
     fn to_mathematical_graph(&self) -> MathematicalGraph;
     fn to_edge_list(&self) -> Edgelist;

@@ -1,3 +1,4 @@
+#![allow(dead_code, unused_variables)]
 use std::rc::Rc;
 mod graph;
 use graph::basics::Graph;
@@ -11,6 +12,7 @@ fn main() {
     let node3 = Rc::new(Node::new());
     let node4 = Rc::new(Node::new());
     let edge1 = Edge::new(Rc::clone(&node1), node2, None, None);
+
     let mut graph = MathematicalGraph::new();
     for _ in 0..10 {
         graph.add_node(Rc::new(Node::new()));
