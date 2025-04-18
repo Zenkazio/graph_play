@@ -31,34 +31,7 @@ impl Graph for MathematicalGraph {
         self.1.extend(edges);
     }
     fn to_adjacency_matrix(&self) -> AdjacencyMatrix {
-        let mut nodes_map: HashMap<Rc<Node>, usize> = HashMap::new();
-        let mut index_count: usize = 0;
-        for node in self.get_nodes() {
-            nodes_map.insert(node.clone(), index_count);
-            index_count += 1;
-        }
-        let nodes_len = self.get_nodes().len();
-        let mut matrix = ndarray::Array2::from_elem((nodes_len, nodes_len), 20);
-        //add zeros for nodes to himself
-        for i in 0..nodes_len {
-            matrix[(i, i)] = 0;
-        }
-        //add edge weights
-        for edge in self.get_edges() {
-            let insert_pos: (usize, usize) = (
-                nodes_map.get(&edge.get_start_node()).unwrap().clone(),
-                nodes_map.get(&edge.get_end_node()).unwrap().clone(),
-            );
-            if edge.get_edge_type() == &EdgeType::Undirected {
-                let inv_insert_pos: (usize, usize) = (
-                    nodes_map.get(&edge.get_end_node()).unwrap().clone(),
-                    nodes_map.get(&edge.get_start_node()).unwrap().clone(),
-                );
-                matrix[inv_insert_pos] = edge.get_weight().unwrap_or(20);
-            }
-            matrix[insert_pos] = edge.get_weight().unwrap_or(20);
-        }
-        AdjacencyMatrix::new(self.get_nodes().clone(), matrix)
+        unimplemented!()
     }
     fn to_mathematical_graph(&self) -> MathematicalGraph {
         self.clone()
